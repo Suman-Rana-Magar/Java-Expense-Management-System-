@@ -32,7 +32,7 @@ public class Dashboard {
         JButton addExpenseButton = new JButton("Add Expense");
         addExpenseButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                new AddExpense(id);
+                new AddExpense(id,null);
                 frame.dispose();
             }
         });
