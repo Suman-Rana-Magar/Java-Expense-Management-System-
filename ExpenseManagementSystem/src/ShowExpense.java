@@ -19,6 +19,11 @@ public class ShowExpense {
             PreparedStatement stmt = con.prepareStatement(sql);
             ResultSet expenses = stmt.executeQuery();
 
+            String userSQl = "select username from users where id=" + userId;
+            PreparedStatement userStmt = con.prepareStatement(userSQl);
+            ResultSet user = userStmt.executeQuery();
+            String userName = user.next() ? user.getString("username") : null;
+
             JLabel headNo = new JLabel("S.No.");
             headNo.setFont(new Font("Arial", Font.BOLD, 15));
             rowPanel.add(headNo);
@@ -91,6 +96,7 @@ public class ShowExpense {
                 rowPanel.add(editButton);
                 rowPanel.add(deleteButton);
             }
+
             JButton dashboardButton = new JButton("Return to Dashboard");
             dashboardButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent ae) {
@@ -98,6 +104,23 @@ public class ShowExpense {
                     frame.dispose();
                 }
             });
+
+            JButton exportToCsv = new JButton("Export To CSV");
+            exportToCsv.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent ae) {
+                    ExportFile.exportToCSV(frame, userId, userName);
+                }
+            });
+
+            JButton exportToText = new JButton("Export To TXT");
+            exportToText.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent ae) {
+                    ExportFile.exportToText(frame, userId, userName);
+                }
+            });
+
+            panel.add(exportToText);
+            panel.add(exportToCsv);
             panel.add(dashboardButton);
             frame.add(panel);
         } catch (Exception exp) {
