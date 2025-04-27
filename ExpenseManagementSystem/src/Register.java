@@ -57,6 +57,14 @@ public class Register {
         });
         panel.add(loginButton);
 
+        JButton returnDashboardButton = new JButton("Return to Dashboard");
+        returnDashboardButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new Dashboard(null);
+                frame.dispose();
+            }
+        });
+        panel.add(returnDashboardButton);
         frame.add(panel);
 
         // hardcoding
@@ -89,6 +97,8 @@ public class Register {
                 insertStmt.setString(2, password);
                 insertStmt.executeUpdate();
                 DisplayMessage.successMessage(frame, "User Registered Successfully !", "Registration Success");
+                new Login();
+                frame.dispose();
             }
         } catch (Exception e) {
             DisplayMessage.errorMessage(frame, e.getMessage(), "Exception Occured");

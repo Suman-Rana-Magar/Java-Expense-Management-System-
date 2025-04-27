@@ -49,6 +49,14 @@ public class Login {
         });
         panel.add(loginButton);
 
+        JButton returnDashboardButton = new JButton("Return to Dashboard");
+        returnDashboardButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new Dashboard(null);
+                frame.dispose();
+            }
+        });
+        panel.add(returnDashboardButton);
         frame.add(panel);
 
         frame.setVisible(true);
@@ -63,6 +71,7 @@ public class Login {
             selectStmt.setString(2, passwordStr);
             ResultSet user = selectStmt.executeQuery();
             if (user.next()) {
+                DisplayMessage.successMessage(frame, "You Logged In Successfully !", "Login Success");
                 new Dashboard(user.getInt("id"));
                 frame.dispose();
             } else {

@@ -8,36 +8,82 @@ public class Dashboard {
     private JFrame frame;
     private JPanel panel = new JPanel();
 
-    public Dashboard(int id) {
+    public Dashboard(Integer id) {
         frame = new JFrame("Dashboard");
         frame.setSize(500, 500);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        String name = null;
-        try {
-            Connection con = DatabaseConnection.getConnection();
-            String selectSql = "select username from users where id=?";
-            PreparedStatement pstmt = con.prepareStatement(selectSql);
-            pstmt.setInt(1, id);
-            ResultSet user = pstmt.executeQuery();
-            if (user.next())
-                name = user.getString("username");
-        } catch (Exception exp) {
-            DisplayMessage.errorMessage(frame, "Username not found", "Exception");
+        JLabel greeting;
+        if (id != null) {
+            String name = null;
+            try {
+                Connection con = DatabaseConnection.getConnection();
+                String selectSql = "select username from users where id=?";
+                PreparedStatement pstmt = con.prepareStatement(selectSql);
+                pstmt.setInt(1, id);
+                ResultSet user = pstmt.executeQuery();
+                if (user.next())
+                    name = user.getString("username");
+            } catch (Exception exp) {
+                DisplayMessage.errorMessage(frame, "Username not found", "Exception");
+            }
+            greeting = new JLabel("HI, " + name + ". Following is your total expense.");
+            panel.add(greeting);
+            JButton addExpenseButton = new JButton("Add Expense");
+            addExpenseButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent ae) {
+                    new AddExpense(id, null);
+                    frame.dispose();
+                }
+            });
+            handleDashboard(id);
+            panel.add(addExpenseButton);
+            JButton logoutButton = new JButton("Logout");
+            logoutButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent actionEvent) {
+                    int confirm = DisplayMessage.confirmMessage(frame, "Are you sure to Log out ?",
+                            "Logout Confirmation");
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        DisplayMessage.successMessage(frame, "You Logged Out Successfully !", "Logout Success");
+                        new Dashboard(null);
+                        frame.dispose();
+                    }
+                }
+            });
+            panel.add(logoutButton);
+        } else {
+            greeting = new JLabel("Hmm, Looks like you are not Logged In!");
+            JButton registerButton = new JButton("Register");
+            registerButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent action) {
+                    new Register();
+                    frame.dispose();
+                }
+            });
+            JButton loginButton = new JButton("Login");
+            loginButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent loginAction) {
+                    new Login();
+                    frame.dispose();
+                }
+            });
+            panel.add(greeting);
+            panel.add(registerButton);
+            panel.add(loginButton);
         }
-        JLabel greeting = new JLabel("HI, " + name + ". Following is your total expense.");
-        panel.add(greeting);
         greeting.setFont(new Font("Arial", Font.BOLD, 18));
 
-        JButton addExpenseButton = new JButton("Add Expense");
-        addExpenseButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                new AddExpense(id,null);
-                frame.dispose();
+        JButton exitButton = new JButton("Exit");
+        exitButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int confirm = DisplayMessage.confirmMessage(frame, "Are you sure to Exit ?",
+                        "Exit Confirmation");
+                if (confirm == JOptionPane.YES_OPTION) {
+                    frame.dispose();
+                }
             }
         });
-        handleDashboard(id);
-        panel.add(addExpenseButton);
+        panel.add(exitButton);
         frame.add(panel);
     }
 
