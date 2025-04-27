@@ -1,6 +1,0 @@
-Expense #1
-Title: ticket
-Amount: 500.0
-Category: Transport
-Payment Mode: Mobile Wallet
-Date: 2025-03-25
