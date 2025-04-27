@@ -102,7 +102,7 @@ public class AddExpense {
         dashboardButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 if (expId != null)
-                    new ShowExpense(userId);
+                    new ShowExpense(userId, "id", "asc");
                 else
                     new Dashboard(userId);
                 frame.dispose();
@@ -136,7 +136,7 @@ public class AddExpense {
             pstmt.executeUpdate();
             if (expId != null) {
                 DisplayMessage.successMessage(frame, "Expense Updated Successfully !", "Expense Updated");
-                new ShowExpense(userId);
+                new ShowExpense(userId, "id", "asc");
                 frame.dispose();
             } else {
                 DisplayMessage.successMessage(frame, "Expense Stored Successfully !", "Expense Stored");

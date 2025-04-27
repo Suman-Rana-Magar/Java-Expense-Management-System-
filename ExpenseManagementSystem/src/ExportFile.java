@@ -6,10 +6,10 @@ public class ExportFile {
     private ExportFile() {
     }
 
-    public static void exportToCSV(JFrame frame, int userId, String userName) {
+    public static void exportToCSV(JFrame frame, int userId, String userName, String sortBy, String orderBy) {
         try {
             Connection con = DatabaseConnection.getConnection();
-            String sql = "select * from expenses where user_id=" + userId;
+            String sql = "select * from expenses where user_id=" + userId + " order by " + sortBy + " " + orderBy;
             PreparedStatement stmt = con.prepareStatement(sql);
             ResultSet expenses = stmt.executeQuery();
 
@@ -32,10 +32,10 @@ public class ExportFile {
         }
     }
 
-    public static void exportToText(JFrame frame, int userId, String userName) {
+    public static void exportToText(JFrame frame, int userId, String userName, String sortBy, String orderBy) {
         try {
             Connection con = DatabaseConnection.getConnection();
-            String sql = "select * from expenses where user_id=" + userId;
+            String sql = "select * from expenses where user_id=" + userId + " order by " + sortBy + " " + orderBy;
             PreparedStatement stmt = con.prepareStatement(sql);
             ResultSet expenses = stmt.executeQuery();
 

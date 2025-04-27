@@ -111,7 +111,7 @@ public class Dashboard {
                 JButton showExpenseButton = new JButton("Show All Expenses");
                 showExpenseButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent ae) {
-                        new ShowExpense(id);
+                        new ShowExpense(id, "id", "asc");
                         frame.dispose();
                     }
                 });

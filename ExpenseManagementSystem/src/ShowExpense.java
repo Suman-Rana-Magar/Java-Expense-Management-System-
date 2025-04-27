@@ -9,13 +9,47 @@ public class ShowExpense {
     JPanel panel = new JPanel();
     JPanel rowPanel = new JPanel(new GridLayout(0, 8));
 
-    public ShowExpense(int userId) {
+    public ShowExpense(int userId, String sort, String sortOrder) {
         frame.setSize(900, 500);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         try {
+            String sortOption[] = { "Title", "Amount", "Date" };
+            JComboBox<String> sortByDropDown = new JComboBox<>(sortOption);
+            if (!sort.equals("id")) {
+                String preSort;
+                if (sort.equalsIgnoreCase("amount"))
+                    preSort = "Amount";
+                else if (sort == "expense_date")
+                    preSort = "Date";
+                else
+                    preSort = "Title";
+                sortByDropDown.setSelectedItem(preSort);
+            }
+            panel.add(new JLabel("Sort By"));
+            panel.add(sortByDropDown);
+
+            String orderOption[] = { "Ascending", "Descending" };
+            JComboBox<String> orderByDropDown = new JComboBox<>(orderOption);
+            if (!sortOrder.equals("asc"))
+                orderByDropDown.setSelectedItem("Descending");
+            panel.add(new JLabel("Order"));
+            panel.add(orderByDropDown);
+
+            JButton sortButton = new JButton("Sort");
+            sortButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent event) {
+                    String sortBy = (String) sortByDropDown.getSelectedItem();
+                    sortBy = sortBy == "Date" ? "expense_date" : sortBy;
+                    String orderBy = (String) orderByDropDown.getSelectedItem() == "Ascending" ? "asc" : "desc";
+                    new ShowExpense(userId, sortBy.toLowerCase(), orderBy);
+                    frame.dispose();
+                }
+            });
+            panel.add(sortButton);
+
             Connection con = DatabaseConnection.getConnection();
-            String sql = "select * from expenses where user_id=" + userId;
+            String sql = "select * from expenses where user_id=" + userId + " order by " + sort + " " + sortOrder;
             PreparedStatement stmt = con.prepareStatement(sql);
             ResultSet expenses = stmt.executeQuery();
 
@@ -80,7 +114,7 @@ public class ShowExpense {
                         int confirmation = DisplayMessage.confirmMessage(frame,
                                 "Are you sure you want to delete this expense?", "Confirm Deletion");
                         if (confirmation == JOptionPane.YES_OPTION) {
-                            handleDeletion(expId, userId);
+                            handleDeletion(expId, userId, sort, sortOrder);
                             frame.dispose();
                         }
                     }
@@ -108,14 +142,14 @@ public class ShowExpense {
             JButton exportToCsv = new JButton("Export To CSV");
             exportToCsv.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent ae) {
-                    ExportFile.exportToCSV(frame, userId, userName);
+                    ExportFile.exportToCSV(frame, userId, userName, sort, sortOrder);
                 }
             });
 
             JButton exportToText = new JButton("Export To TXT");
             exportToText.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent ae) {
-                    ExportFile.exportToText(frame, userId, userName);
+                    ExportFile.exportToText(frame, userId, userName, sort, sortOrder);
                 }
             });
 
@@ -128,14 +162,14 @@ public class ShowExpense {
         }
     }
 
-    private void handleDeletion(int expId, int userId) {
+    private void handleDeletion(int expId, int userId, String sort, String sortOrder) {
         try {
             Connection con = DatabaseConnection.getConnection();
             String sql = "delete from expenses where id=" + expId;
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.executeUpdate();
             DisplayMessage.successMessage(frame, "Expense Deleted Successfully !", "Deletion Success");
-            new ShowExpense(userId);
+            new ShowExpense(userId, sort, sortOrder); // todo
             frame.dispose();
         } catch (Exception exp) {
             DisplayMessage.errorMessage(frame, exp.getMessage(), "Exception");
